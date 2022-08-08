@@ -143,7 +143,7 @@ class OrderControllerTest extends TestCase
 
     public function orderQueryDataProvider()
     {
-        return [[0], [1], [2], [3], [4], [5], [6]];
+        return [[0], [1], [2], [3], [4], [5], [6], [7], [8]];
     }
 
     /**
@@ -165,6 +165,11 @@ class OrderControllerTest extends TestCase
         $vin = $modelAs[0]->vin;
         $key = $keys[1];
         $technician = $technicians[0];
+        $compoundQuery = [
+            'vehicle' => 'Model ',
+            'key' => $keys[2]->name,
+            'technician' => $technicians[1]->first_name,
+        ];
         $testCases = [
             [6, $orders->pluck('id')->toArray(), []],
             [6, $orders->pluck('id')->toArray(), ['vehicle' => $manufacturer->name]],
@@ -173,6 +178,8 @@ class OrderControllerTest extends TestCase
             [2, $orderBatch2->pluck('id')->toArray(), ['key' => $key->name]],
             [4, $orderBatch1->concat($orderBatch2)->pluck('id')->toArray(), ['technician' => $technician->first_name]],
             [4, $orderBatch1->concat($orderBatch2)->pluck('id')->toArray(), ['technician' => $technician->full_name]],
+            [2, $orderBatch3->pluck('id')->toArray(), $compoundQuery],
+            [0, [], ['vehicle' => 'Car']]
         ];
 
         list($count, $ids, $query) = $testCases[$testIdx];
