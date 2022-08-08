@@ -89,7 +89,7 @@ class OrderControllerTest extends TestCase
         $this->assertOrderRelation($order, $vehicle, $key, $technician);
 
         // Test Order
-        $path = "$path/{$order->id}";
+        $path = route('order.api.update', ['order' => $order]);
         $newVehicle = Vehicle::factory()->for($manufacturer)->create();
         $body['vehicle_id'] = $newVehicle->id;
         $newKey = Key::factory()->create();
@@ -101,5 +101,16 @@ class OrderControllerTest extends TestCase
         // Test Order Updated Values
         $order = Order::find($order->id);
         $this->assertOrderRelation($order, $newVehicle, $newKey, $newTechnician);
+    }
+
+    public function test_order_deletion()
+    {
+        $vehicle = Vehicle::factory()->forManufacturer()->create();
+        $key = Key::factory()->create();
+        $technician = Technician::factory()->create();
+        $order = Order::factory()->for($vehicle)->for($key)->for($technician)->create();
+        $response = $this->json('delete', route('order.api.delete', ['order' => $order]));
+        $response->assertStatus(200);
+        $this->assertNull(Order::find($order->id));
     }
 }

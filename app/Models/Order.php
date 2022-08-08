@@ -20,7 +20,7 @@ class Order extends Model
         Route::get($path, "$controller@index")->name($name);
         Route::post($path, "$controller@store")->name("$name.store");
         Route::patch("$path/{order}", "$controller@update")->name("$name.update");
-        Route::delete("$path/{order}", "$controller@delete")->name("$name.delete");
+        Route::delete("$path/{order}", "$controller@destroy")->name("$name.delete");
     }
 
     public function vehicle()
