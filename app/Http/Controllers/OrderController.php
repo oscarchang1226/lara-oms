@@ -20,17 +20,26 @@ class OrderController extends Controller
             $orders->whereHas('vehicle', function ($q) use ($term) {
                 $q->where(function ($q) use ($term) {
                     $q->whereHas('manufacturer', function ($q) use ($term) {
-                        $q->where('manufacturers.name', 'like', $term);
+                        $q->whereRaw('name like ?', [$term]);
                     })
-                    ->orWhere('name', 'like', $term)
-                    ->orWhere('vin', 'like', $term);
+                    ->orWhereRaw('name like ?', [$term])
+                    ->orWhereRaw('vin like ?', [$term]);
                 });
             });
         }
         if (request()->filled('key')) {
             $term = '%' . request('key') . '%';
             $orders->whereHas('key', function ($q) use ($term) {
-                $q->where('name', 'like', $term);
+                $q->whereRaw('name like ?', [$term]);
+            });
+        }
+        if (request()->filled('technician')) {
+            $term = '%' . request('technician') . '%';
+            $orders->whereHas('technician', function ($q) use ($term) {
+                $q->where(function ($q) use ($term) {
+                    $q->whereRaw('concat(first_name, concat(" ", concat(last_name))) like ?', [$term])
+                        ->orWhereRaw('concat(last_name, concat(", ", concat(first_name))) like ?', [$term]);
+                });
             });
         }
         return $orders->paginate(10);
