@@ -18,7 +18,7 @@ class VehicleFactory extends Factory
     {
         return [
             'vin' => fake()->unique()->regexify('[A-Z0-9]{17}'),
-            'name' => fake()->words(5, true)
+            'name' => fake()->randomElement(['Model K', 'Model A', 'Model R'])
         ];
     }
 }

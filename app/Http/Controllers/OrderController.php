@@ -14,7 +14,8 @@ class OrderController extends Controller
      */
     public function index()
     {
-        //
+        $orders = Order::query();
+        return $orders->paginate(10);
     }
 
     /**
@@ -27,17 +28,6 @@ class OrderController extends Controller
     {
         $order = new Order();
         return $this->update($request, $order);
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Order  $order
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Order $order)
-    {
-        //
     }
 
     /**
