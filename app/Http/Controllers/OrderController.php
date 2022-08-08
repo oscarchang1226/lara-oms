@@ -18,9 +18,12 @@ class OrderController extends Controller
         if (request()->filled('vehicle')) {
             $orders->whereHas('vehicle', function ($q) {
                 $q->where(function ($q) {
-                    $q->whereHas('manufacturer', function ($q) {
-                        $q->where('manufacturers.name', 'like', '%' . request('vehicle') . '%');
-                    });
+                    $term = '%' . request('vehicle') . '%';
+                    $q->whereHas('manufacturer', function ($q) use ($term) {
+                        $q->where('manufacturers.name', 'like', $term);
+                    })
+                    ->orWhere('name', 'like', $term)
+                    ->orWhere('vin', 'like', $term);
                 });
             });
         }
