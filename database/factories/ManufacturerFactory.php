@@ -5,9 +5,9 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Vehicle>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Manufacturer>
  */
-class VehicleFactory extends Factory
+class ManufacturerFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,8 +17,7 @@ class VehicleFactory extends Factory
     public function definition()
     {
         return [
-            'vin' => fake()->unique()->regexify('[A-Z0-9]{17}'),
-            'name' => fake()->words(5, true)
+            'name' => $this->faker->words(5, true)
         ];
     }
 }

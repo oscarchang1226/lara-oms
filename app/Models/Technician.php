@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Technician extends Model
 {
     use HasFactory;
+
+    public function getFullNameAttribute()
+    {
+        return "$this->last_name, $this->first_name";
+    }
 }
