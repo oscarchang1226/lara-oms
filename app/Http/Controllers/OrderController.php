@@ -16,15 +16,21 @@ class OrderController extends Controller
     {
         $orders = Order::query();
         if (request()->filled('vehicle')) {
-            $orders->whereHas('vehicle', function ($q) {
-                $q->where(function ($q) {
-                    $term = '%' . request('vehicle') . '%';
+            $term = '%' . request('vehicle') . '%';
+            $orders->whereHas('vehicle', function ($q) use ($term) {
+                $q->where(function ($q) use ($term) {
                     $q->whereHas('manufacturer', function ($q) use ($term) {
                         $q->where('manufacturers.name', 'like', $term);
                     })
                     ->orWhere('name', 'like', $term)
                     ->orWhere('vin', 'like', $term);
                 });
+            });
+        }
+        if (request()->filled('key')) {
+            $term = '%' . request('key') . '%';
+            $orders->whereHas('key', function ($q) use ($term) {
+                $q->where('name', 'like', $term);
             });
         }
         return $orders->paginate(10);
