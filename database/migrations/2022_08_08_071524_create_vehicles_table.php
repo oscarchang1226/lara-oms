@@ -1,9 +1,9 @@
 <?php
 
+use App\Models\Manufacturer;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use App\Models\Maker;
 
 return new class extends Migration
 {
@@ -14,14 +14,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('maker_models', function (Blueprint $table) {
+        Schema::create('vehicles', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Maker::class)->references('id')->on('makers');
             $table->string('name');
-            $table->year('year');
+            $table->foreignId('manufacturer_id')->constrained();
+            $table->string('vin')->unique();
             $table->timestamps();
-
-            $table->unique(['maker_id', 'name', 'year']);
         });
     }
 
@@ -32,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('maker_models');
+        Schema::dropIfExists('vehicles');
     }
 };

@@ -3,7 +3,6 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use App\Models\MakerModel;
 
 return new class extends Migration
 {
@@ -14,12 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('vehicles', function (Blueprint $table) {
+        Schema::create('keys', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(MakerModel::class)->references('id')->on('maker_models');
-            $table->string('vin')->unique();
+            $table->string('name');
+            $table->text('description');
             $table->timestamps();
-
         });
     }
 
@@ -30,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('vehicles');
+        Schema::dropIfExists('keys');
     }
 };

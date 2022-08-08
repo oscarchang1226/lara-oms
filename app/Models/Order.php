@@ -2,22 +2,24 @@
 
 namespace App\Models;
 
+use App\Http\Controllers\OrderController;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Route;
 
 class Order extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['vehicle_key_id', 'technician_id'];
-
-    public function vehicleKey()
+    public static function addApiRoutes()
     {
-        return $this->belongsTo(VehicleKey::class);
-    }
+        $controller = OrderController::class;
+        $path = '/orders';
+        $name = 'order';
 
-    public function technician()
-    {
-        return $this->belongsTo(Technician::class);
+        Route::get($path, "$controller@index")->name($name);
+        Route::post($path, "$controller@store")->name("$name.store");
+        Route::patch("$path/{order}", "$controller@update")->name("$name.update");
+        Route::delete("$path/{order}", "$controller@delete")->name("$name.delete");
     }
 }
