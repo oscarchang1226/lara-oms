@@ -15,6 +15,15 @@ class OrderController extends Controller
     public function index()
     {
         $orders = Order::query();
+        if (request()->filled('vehicle')) {
+            $orders->whereHas('vehicle', function ($q) {
+                $q->where(function ($q) {
+                    $q->whereHas('manufacturer', function ($q) {
+                        $q->where('manufacturers.name', 'like', '%' . request('vehicle') . '%');
+                    });
+                });
+            });
+        }
         return $orders->paginate(10);
     }
 

@@ -141,7 +141,15 @@ class OrderControllerTest extends TestCase
         });
     }
 
-    public function test_order_query()
+    public function orderQueryDataProvider()
+    {
+        return [[0], [1], [2], [3]];
+    }
+
+    /**
+     * @dataProvider orderQueryDataProvider
+     */
+    public function test_order_query($testIdx)
     {
         $manufacturer = Manufacturer::factory()->create();
         $modelKs = $this->createVehicles($manufacturer, ['name' => 'Model K'], 2);
@@ -154,20 +162,17 @@ class OrderControllerTest extends TestCase
         $orderBatch3 = $this->createOrders($modelRs, $keys[2], $technicians[1]);
         $orders = $orderBatch1->concat($orderBatch2)->concat($orderBatch3);
 
-        // Test all
-        $this->queryOrderApi(6, $orders->pluck('id')->toArray(), []);
-
-        // Test by vehicle manufacturer
-        $query = ['vehicle' => $manufacturer->name];
-        $this->queryOrderApi(6, $orders->pluck('id')->toArray(), $query);
-        
-        // Test by vehicle model name
-        $query = ['vehicle' => 'Model K'];
-        $this->queryOrderApi(2, $orderBatch1->pluck('id')->toArray(), $query);
-
-        // Test by vehicle vin number
         $vin = $modelAs[0]->vin;
-        $query = ['vehicle' => substr($vin, count($vin) / 2, count($vin))];
-        $this->queryOrderApi(1, [$orderBatch2[0]->id], $query);
+        $testCases = [
+            [6, $orders->pluck('id')->toArray(), []],
+            [6, $orders->pluck('id')->toArray(), ['vehicle' => $manufacturer->name]],
+            [2, $orderBatch1->pluck('id')->toArray(), ['vehicle' => 'Model K']],
+            [1, [$orderBatch2[0]->id],['vehicle' => substr($vin, strlen($vin) / 2, strlen($vin))]],
+        ];
+
+        list($count, $ids, $query) = $testCases[$testIdx];
+
+        // Test all
+        $this->queryOrderApi($count, $ids, $query);
     }
 }
