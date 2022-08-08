@@ -125,12 +125,12 @@ class OrderControllerTest extends TestCase
         $this->assertEquals($ids, $orderIds);
     }
 
-    private function createVehicles($manufacturer, $state, $count)
+    private function createVehicles($manufacturer, $model, $count)
     {
         return Vehicle::factory()
             ->count($count)
             ->for($manufacturer)
-            ->state($state)
+            ->state(['name' => "Model $model"])
             ->create();
     }
 
@@ -143,7 +143,7 @@ class OrderControllerTest extends TestCase
 
     public function orderQueryDataProvider()
     {
-        return [[0], [1], [2], [3]];
+        return [[0], [1], [2], [3], [4], [5], [6]];
     }
 
     /**
@@ -152,9 +152,9 @@ class OrderControllerTest extends TestCase
     public function test_order_query($testIdx)
     {
         $manufacturer = Manufacturer::factory()->create();
-        $modelKs = $this->createVehicles($manufacturer, ['name' => 'Model K'], 2);
-        $modelAs = $this->createVehicles($manufacturer, ['name' => 'Model A'], 2);
-        $modelRs = $this->createVehicles($manufacturer, ['name' => 'Model R'], 2);
+        $modelKs = $this->createVehicles($manufacturer, 'K', 2);
+        $modelAs = $this->createVehicles($manufacturer, 'A', 2);
+        $modelRs = $this->createVehicles($manufacturer, 'R', 2);
         $keys = Key::factory()->count(3)->create();
         $technicians = Technician::factory()->count(2)->create();
         $orderBatch1 = $this->createOrders($modelKs, $keys[0], $technicians[0]);
@@ -163,11 +163,16 @@ class OrderControllerTest extends TestCase
         $orders = $orderBatch1->concat($orderBatch2)->concat($orderBatch3);
 
         $vin = $modelAs[0]->vin;
+        $key = $keys[1];
+        $technician = $technicians[0];
         $testCases = [
             [6, $orders->pluck('id')->toArray(), []],
             [6, $orders->pluck('id')->toArray(), ['vehicle' => $manufacturer->name]],
             [2, $orderBatch1->pluck('id')->toArray(), ['vehicle' => 'Model K']],
             [1, [$orderBatch2[0]->id],['vehicle' => substr($vin, strlen($vin) / 2, strlen($vin))]],
+            [2, $orderBatch2->pluck('id')->toArray(), ['key' => $key->name]],
+            [4, $orderBatch1->concat($orderBatch2)->pluck('id')->toArray(), ['technician' => $technician->first_name]],
+            [4, $orderBatch1->concat($orderBatch2)->pluck('id')->toArray(), ['technician' => $technician->full_name]],
         ];
 
         list($count, $ids, $query) = $testCases[$testIdx];
