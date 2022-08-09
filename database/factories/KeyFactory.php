@@ -17,7 +17,7 @@ class KeyFactory extends Factory
     public function definition()
     {
         return [
-            'name' => fake()->word(2, true),
+            'name' => fake()->unique()->word(2, true),
             'description' => fake()->sentence,
         ];
     }
