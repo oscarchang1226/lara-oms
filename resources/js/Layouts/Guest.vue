@@ -49,14 +49,14 @@ const showingNavigationDropdown = ref(true);
                                         </span>
                                     </template>
 
-                                    <template #content>
+                                    <!-- <template #content>
                                         <BreezeDropdownLink :href="route('login')">
                                             Log in
                                         </BreezeDropdownLink>
                                         <BreezeDropdownLink :href="route('register')">
                                             Register
                                         </BreezeDropdownLink>
-                                    </template>
+                                    </template> -->
                                 </BreezeDropdown>
                             </div>
                         </div>

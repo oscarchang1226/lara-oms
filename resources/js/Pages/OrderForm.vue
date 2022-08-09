@@ -6,6 +6,7 @@ import BreezeLabel from '@/Components/Label.vue';
 import BreezeValidationErrors from '@/Components/ValidationErrors.vue';
 import { Head, useForm } from '@inertiajs/inertia-vue3';
 import axios from 'axios';
+import route from '../../../vendor/tightenco/ziggy/src/js';
 
 const props = defineProps({
     apiUrl: String,
@@ -33,6 +34,7 @@ const submit = () => {
         }
     }
     axios(options);
+    window.location.href = route('orders');
 };
 
 const deleteClick = () => {
@@ -41,6 +43,7 @@ const deleteClick = () => {
         url: props.apiUrl
     }
     axios(options);
+    window.location.href = route('orders');
 };
 
 </script>
