@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use App\Models\Order;
 use Illuminate\Http\Request;
 
@@ -14,7 +15,7 @@ class OrderController extends Controller
      */
     public function index()
     {
-        $orders = Order::query();
+        $orders = Order::with(['vehicle.manufacturer', 'key', 'technician']);
         if (request()->filled('vehicle')) {
             $term = '%' . request('vehicle') . '%';
             $orders->whereHas('vehicle', function ($q) use ($term) {
@@ -42,7 +43,16 @@ class OrderController extends Controller
                 });
             });
         }
-        return $orders->paginate(10);
+        $paginate = $orders->paginate(10);
+        $paginate->getCollection()->transform(function ($i) {
+            return [
+                'id' => $i->id,
+                'vehicle' => "{$i->vehicle->manufacturer->name} - {$i->vehicle->name} ({$i->vehicle->vin})",
+                'key' => $i->key->name,
+                'technician' => $i->technician->full_name
+            ];
+        });
+        return $paginate;
     }
 
     /**

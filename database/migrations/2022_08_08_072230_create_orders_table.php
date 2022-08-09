@@ -19,6 +19,8 @@ return new class extends Migration
             $table->foreignId('key_id')->constrained();
             $table->foreignId('technician_id')->constrained();
             $table->timestamps();
+
+            $table->unique(['vehicle_id', 'key_id', 'technician_id']);
         });
     }
 
